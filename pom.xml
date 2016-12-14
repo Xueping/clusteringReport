@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>cluster.reporting</groupId>
+  <artifactId>offline</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>clusteringReport</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spark.version>2.0.2</spark.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+	    <groupId>com.lihaoyi</groupId>
+	    <artifactId>scalatags_2.11</artifactId>
+	    <version>0.6.2</version>
+	</dependency>
+	<dependency>
+	    <groupId>com.lihaoyi</groupId>
+	    <artifactId>utest_2.11</artifactId>
+	    <version>0.4.4</version>
+	</dependency>
+	<dependency>
+	    <groupId>com.lihaoyi</groupId>
+	    <artifactId>acyclic_2.11</artifactId>
+	    <version>0.1.5</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.scala-js</groupId>
+	    <artifactId>scalajs-library_2.11</artifactId>
+	    <version>0.6.13</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.scala-js</groupId>
+	    <artifactId>scalajs-dom_sjs0.6_2.11</artifactId>
+	    <version>0.9.1</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.spark</groupId>
+	    <artifactId>spark-core_2.11</artifactId>
+	    <version>${spark.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.spark</groupId>
+	    <artifactId>spark-mllib_2.11</artifactId>
+	    <version>${spark.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.zeroturnaround</groupId>
+	    <artifactId>zt-zip</artifactId>
+	    <version>1.10</version>
+	    <type>jar</type>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-email</artifactId>
+	    <version>1.4</version>
+	</dependency>
+	<dependency>
+	    <groupId>com.typesafe.play</groupId>
+	    <artifactId>play-json_2.11</artifactId>
+	    <version>2.5.10</version>
+	</dependency>
+  </dependencies>
+</project>
