@@ -6,7 +6,7 @@ import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable.ArrayBuffer
 
-abstract class ClusteringAPCData {
+class ClusteringAPCData {
 
   def obtainClusters() = {
 
@@ -15,14 +15,29 @@ abstract class ClusteringAPCData {
 
     // Initialize Spark configuration & context
     val sparkConf: SparkConf = new SparkConf().setAppName(appName)
-      .setMaster("local[1]").set("spark.executor.memory", "1g");
+      .setMaster("local[2]")
+//      .set("spark.executor.memory", "2gb")
+      .set("spark.driver.memory","6gb")
+          .set("spark.rdd.compress","true")
+//          .set("spark.memory.useLegacyMode","true")
+          .set("spark.storage.memoryFraction", "0.9")
+          .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+          .set("spark.kryoserializer.buffer.max","2000mb")
+          .set("spark.kryoserializer.buffer","64mb")
+          .set("spark.default.parallelism","32")
+          .set("spark.eventLog.enabled","true")
 
     val sc: SparkContext = new SparkContext(sparkConf);
 
-    val rawData = sc.textFile("D:\\dev\\R_project\\C3\\demo.csv").cache()
+    val rawData = sc.textFile("/Users/xuepingpeng/Dropbox/team/HoD/interactiveClustering/demo_pre.csv").cache()
     val dataAndLabel = vectorization(rawData)
     
-    val data = dataAndLabel.map(_._1)
+    
+//    val data = dataAndLabel.map(_._1)
+    
+    dataAndLabel.map(_._1)
+    
+    
 
 
   }
@@ -65,5 +80,12 @@ abstract class ClusteringAPCData {
     }
 
   }
+  
+  def main(args: Array[String]):Unit = {
+
+//     Visualization packFiles()
+   
+  }
+  
 
 }
