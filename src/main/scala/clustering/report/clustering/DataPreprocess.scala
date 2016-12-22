@@ -5,6 +5,10 @@ import scala.collection.mutable.ArrayBuffer
 import clustering.report.html.Visualization
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import org.apache.commons.io.FileUtils
+import java.io.File
+import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.linalg.Vectors
 
 object DataPreprocess {
   
@@ -45,11 +49,57 @@ object DataPreprocess {
   
   
   def main(args: Array[String]):Unit = {
+    
+    FileUtils.deleteQuietly(new File("./resource/source/output.txt"))
 
     val cluster : ClusteringAPCData =  new ClusteringAPCData()
     val data = cluster.obtainClusters()
-    data.saveAsTextFile("/Users/xuepingpeng/Dropbox/team/HoD/interactiveClustering/output.txt");
+  
+    val model = KMeans.train(data, k=5,100)
+    
+    val WSSSE = model.computeCost(data)
+    
+    println(s"Within Set Sum of Squared Errors = $WSSSE")
+    val clusters = model.predict(data)
+    
+    
+    clusters.saveAsTextFile("./resource/source/output.txt")
+    
+    val labels = clusters.zipWithIndex().map{case(v,i) => (i,v)}
+    val labeledData = data.zipWithIndex().map{case(v,i) => (i,v)}.join(labels)
+    
+    
+//    val appName: String = "ClusteringExample";
+//
+//    // Initialize Spark configuration & context
+//    val sparkConf: SparkConf = new SparkConf().setAppName(appName)
+//      .setMaster("local[10]")
+////      .set("spark.executor.memory", "2gb")
+//      .set("spark.driver.memory","60gb")
+//          .set("spark.rdd.compress","true")
+////          .set("spark.memory.useLegacyMode","true")
+//          .set("spark.storage.memoryFraction", "0.9")
+//          .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+//          .set("spark.kryoserializer.buffer.max","2000mb")
+//          .set("spark.kryoserializer.buffer","64mb")
+//          .set("spark.default.parallelism","32")
+//          .set("spark.eventLog.enabled","true")
+//
+//    val sc: SparkContext = new SparkContext(sparkConf);
+//    
+//    val rawData = sc.textFile("./resource/source/demo_pre.csv")
+//    
+//    val newData = rawData.map(_.split(",")).map(
+//        x => {
+//        val b = x.toBuffer
+//        b.remove(1)
+//        Vectors.dense(b.map(_.toDouble).toArray)})
+    
+
+//    data.map(f => f.mkString(" ")).saveAsTextFile("./resource/source/output.txt");
    
+//    val str:String = "2,200005,200067,200060,200059,1,0,4,1"
+//    println(str.split(",")(0))
   }
   
 }
