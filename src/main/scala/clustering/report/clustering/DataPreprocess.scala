@@ -1,14 +1,16 @@
 package clustering.report.clustering
 
-import org.apache.spark.rdd.RDD
+import java.io.File
+
 import scala.collection.mutable.ArrayBuffer
-import clustering.report.html.Visualization
+
+import org.apache.commons.io.FileUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
-import org.apache.commons.io.FileUtils
-import java.io.File
 import org.apache.spark.mllib.clustering.KMeans
-import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.linalg.{ Vector, Vectors }
+
 
 object DataPreprocess {
   
@@ -46,6 +48,33 @@ object DataPreprocess {
         
     
   }
+   
+   def clustering(data : RDD[Vector]):String  = {
+     
+      val builder = StringBuilder.newBuilder
+      val model = KMeans.train(data, k=5,100)
+      val clusters = model.predict(data)    
+      val labels = clusters.zipWithIndex().map{case(v,i) => (i,v)}
+      val labeledData = labels.join(data.zipWithIndex().map{case(v,i) => (i,v)})    
+      val clusteredData = labeledData.map(f => f._2).groupByKey()
+      val ids = clusteredData.map{f => 
+         val clust = f._1
+         val points = f._2.toList
+         (clust,points.size,points)    
+      }.collect()
+      
+     for( a <- 0 until ids.size -1){
+           val clust = ids(a)._1
+           
+           if(ids(a)._2 >100) {
+             val newPoints = clusteredData.context.parallelize(ids(a)._3)
+             builder.append(clustering(newPoints))
+           }
+           else builder.append(ids(a)._3.toString())
+      }
+      
+      return builder.toString()
+   }
   
   
   def main(args: Array[String]):Unit = {
@@ -54,46 +83,25 @@ object DataPreprocess {
 
     val cluster : ClusteringAPCData =  new ClusteringAPCData()
     val data = cluster.obtainClusters()
-  
-    val model = KMeans.train(data, k=5,100)
     
-    val WSSSE = model.computeCost(data)
-    
-    println(s"Within Set Sum of Squared Errors = $WSSSE")
-    val clusters = model.predict(data)
+    println(clustering(data))
     
     
-    clusters.saveAsTextFile("./resource/source/output.txt")
+//    val model = KMeans.train(data, k=5,100)
+//    val clusters = model.predict(data)    
+//    val labels = clusters.zipWithIndex().map{case(v,i) => (i,v)}
+//    val labeledData = labels.join(data.zipWithIndex().map{case(v,i) => (i,v)})    
+//    val clusteredData = labeledData.map(f => f._2).groupByKey()
+//    val ids = clusteredData.map{f => 
+//       val clust = f._1
+//       val points = f._2.toList
+//       val newPoints = clusteredData.context.parallelize(points)
+//       (clust,points.size,newPoints)    
+//    }
     
-    val labels = clusters.zipWithIndex().map{case(v,i) => (i,v)}
-    val labeledData = data.zipWithIndex().map{case(v,i) => (i,v)}.join(labels)
+
     
-    
-//    val appName: String = "ClusteringExample";
-//
-//    // Initialize Spark configuration & context
-//    val sparkConf: SparkConf = new SparkConf().setAppName(appName)
-//      .setMaster("local[10]")
-////      .set("spark.executor.memory", "2gb")
-//      .set("spark.driver.memory","60gb")
-//          .set("spark.rdd.compress","true")
-////          .set("spark.memory.useLegacyMode","true")
-//          .set("spark.storage.memoryFraction", "0.9")
-//          .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-//          .set("spark.kryoserializer.buffer.max","2000mb")
-//          .set("spark.kryoserializer.buffer","64mb")
-//          .set("spark.default.parallelism","32")
-//          .set("spark.eventLog.enabled","true")
-//
-//    val sc: SparkContext = new SparkContext(sparkConf);
-//    
-//    val rawData = sc.textFile("./resource/source/demo_pre.csv")
-//    
-//    val newData = rawData.map(_.split(",")).map(
-//        x => {
-//        val b = x.toBuffer
-//        b.remove(1)
-//        Vectors.dense(b.map(_.toDouble).toArray)})
+
     
 
 //    data.map(f => f.mkString(" ")).saveAsTextFile("./resource/source/output.txt");
