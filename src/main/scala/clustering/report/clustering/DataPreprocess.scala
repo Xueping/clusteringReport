@@ -86,24 +86,6 @@ object DataPreprocess {
     
     println(clustering(data))
     
-    
-//    val model = KMeans.train(data, k=5,100)
-//    val clusters = model.predict(data)    
-//    val labels = clusters.zipWithIndex().map{case(v,i) => (i,v)}
-//    val labeledData = labels.join(data.zipWithIndex().map{case(v,i) => (i,v)})    
-//    val clusteredData = labeledData.map(f => f._2).groupByKey()
-//    val ids = clusteredData.map{f => 
-//       val clust = f._1
-//       val points = f._2.toList
-//       val newPoints = clusteredData.context.parallelize(points)
-//       (clust,points.size,newPoints)    
-//    }
-    
-
-    
-
-    
-
 //    data.map(f => f.mkString(" ")).saveAsTextFile("./resource/source/output.txt");
    
 //    val str:String = "2,200005,200067,200060,200059,1,0,4,1"
