@@ -39,6 +39,4 @@ object Demo {
    val model = KMeans.train(newData, k=5,100)
    val predict = model.predict(newData)
 
-     
-  
 }

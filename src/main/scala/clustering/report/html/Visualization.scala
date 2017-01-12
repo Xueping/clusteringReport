@@ -23,7 +23,7 @@ def generateJSON(file: String) = {
   }
   
   
-  def generateHtml() = {
+  def generateHtml(jsonStr : String) = {
     
      val htmlFrag = {
              html(
@@ -48,7 +48,8 @@ def generateJSON(file: String) = {
                    ),
                         
                   script(tpe:="text/javascript")(
-                        raw( "var flare = \'"+ generateJSON("./resource/source/clusterTree.json") +"\'; ")
+                        //raw( "var flare = \'"+ generateJSON("./resource/source/clusterTree.json") +"\'; ")
+                      raw( "var flare = \'"+ jsonStr +"\'; ")
                     ),
                    script(tpe:="text/javascript",src:="./dependency-files/clusterReport.js")
                    
@@ -59,7 +60,7 @@ def generateJSON(file: String) = {
       htmlFrag.toString()
   }
   
-  def packFiles() = {
+  def packFiles( jsonStr : String) = {
     
     //Delete existing Files
     FileUtils.deleteQuietly(new File("./resource/packed/source.zip"))
@@ -71,14 +72,14 @@ def generateJSON(file: String) = {
     //put generated html file into existing source.zip and change name to offline_clustering_report.zip
     ZipUtil.addEntry(new File("./resource/packed/source.zip"), 
                     "offline_clustering_report.html", 
-                    generateHtml().getBytes,
+                    generateHtml(jsonStr).getBytes,
                     new File("./resource/packed/offline_clustering_report.zip"))
   }
   
   
  def main(args: Array[String]):Unit = {
 
-     packFiles()
+//     packFiles(jsonStr)
    
   }
   

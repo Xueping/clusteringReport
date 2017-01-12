@@ -6,9 +6,9 @@ import org.apache.spark.mllib.linalg.{ Vector, Vectors }
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable.ArrayBuffer
 
-class ClusteringAPCData {
+class DataProcessor {
 
-  def obtainClusters() = {
+  def obtainPreprocessData() = {
 
     // Set application name
     val appName: String = "ClusteringExample";
@@ -18,26 +18,25 @@ class ClusteringAPCData {
       .setMaster("local[10]")
 //      .set("spark.executor.memory", "2gb")
       .set("spark.driver.memory","60gb")
-          .set("spark.rdd.compress","true")
+      .set("spark.rdd.compress","true")
 //          .set("spark.memory.useLegacyMode","true")
-          .set("spark.storage.memoryFraction", "0.9")
-          .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-          .set("spark.kryoserializer.buffer.max","2000mb")
-          .set("spark.kryoserializer.buffer","64mb")
-          .set("spark.default.parallelism","32")
-          .set("spark.eventLog.enabled","true")
+      .set("spark.storage.memoryFraction", "0.9")
+      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+      .set("spark.kryoserializer.buffer.max","2000mb")
+      .set("spark.kryoserializer.buffer","64mb")
+      .set("spark.default.parallelism","32")
+      .set("spark.eventLog.enabled","true")
 
     val sc: SparkContext = new SparkContext(sparkConf);
 
-    val rawData = sc.textFile("./resource/source/demo_pre.csv").cache()
-//    rawData
+    val rawData = sc.textFile("./resource/source/demo.csv").cache()
+    val header = rawData.first()
+    val rawData_withoutHeader = rawData.filter { row => (row != header)&&(!row.contains(",,")) }
     
-    val dataAndLabel = vectorization(rawData)
-    
-    
+    vectorization(rawData_withoutHeader)
+//    val dataAndLabel = vectorization(rawData_withoutHeader)
 //    val data = dataAndLabel.map(_._1)
-    
-    dataAndLabel.map(_._1)
+//    dataAndLabel
   }
 
 
@@ -51,6 +50,7 @@ class ClusteringAPCData {
       normalizedData.map {
       line =>{
         val buffer = ArrayBuffer[String]()
+        val labelBuffer = StringBuilder.newBuilder
 
         buffer.appendAll(line.split(","))
         
@@ -73,17 +73,14 @@ class ClusteringAPCData {
         vector.insertAll(0, newAdmissionFeatures)
         vector.insertAll(0, newPayorFeatures)
         vector.insertAll(0, newEthnicityFeatures)
-        (Vectors.dense(vector.toArray), label)
+        
+        labelBuffer.append(label).append(",")
+                   .append(ethnicity).append(",")
+                   .append(payor).append(",")
+                   .append(admission)
+        
+        (Vectors.dense(vector.toArray), labelBuffer.toString())
       }
     }
-
   }
-  
-  def main(args: Array[String]):Unit = {
-
-//     Visualization packFiles()
-   
-  }
-  
-
 }
