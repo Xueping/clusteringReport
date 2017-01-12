@@ -13,7 +13,7 @@ class DataProcessor {
     // Set application name
     val appName: String = "ClusteringExample";
 
-    // Initialize Spark configuration & context
+    // Initialise Spark configuration & context
     val sparkConf: SparkConf = new SparkConf().setAppName(appName)
       .setMaster("local[10]")
 //      .set("spark.executor.memory", "2gb")

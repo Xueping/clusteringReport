@@ -4,24 +4,24 @@ import scalatags.Text.all._
 import java.io.File
 import org.zeroturnaround.zip.ZipUtil
 import java.io.FileInputStream
-import play.api.libs.json.Json
+//import play.api.libs.json.Json
 import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.io.FileUtils
 
 object Visualization {
   
   
-  /**
- * @param file
- * @return
- */
-def generateJSON(file: String) = {
-    
-    val stream = new FileInputStream(file)
-    val json = try { Json.parse(stream) } finally { stream.close() }
-    json
-  }
-  
+//  /**
+// * @param file
+// * @return
+// */
+//def generateJSON(file: String) = {
+//    
+//    val stream = new FileInputStream(file)
+//    val json = try { Json.parse(stream) } finally { stream.close() }
+//    json
+//  }
+//  
   
   def generateHtml(jsonStr : String) = {
     

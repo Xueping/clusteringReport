@@ -80,10 +80,8 @@ object DataClustering {
    }
   
   
-  def main(args: Array[String]):Unit = {
+  def main(args: Array[String]): Unit  = {
     
-    FileUtils.deleteQuietly(new File("./resource/source/output.txt"))
-
     val cluster : DataProcessor =  new DataProcessor()
     val data = cluster.obtainPreprocessData()
     val statisticEthnicity = data.map(_._2.split(",")(1)).map { x => (x,1) }.reduceByKey(_+_).collect()
@@ -93,31 +91,26 @@ object DataClustering {
         
      val builder = StringBuilder.newBuilder
      builder.append("{\"name\":").append(data.count()).append(",\"clusterId\": \"Initial Data\",\"eth\":{")
+     
      for( item <- statisticEthnicity)
+       
       (
-       builder.append("\"e").append(item._1).append("\":").append(item._2).append(",")
+           builder.append("\"e").append(item._1).append("\":").append(item._2).append(",")
       )
-      builder.append("},")
-      builder.append("\"payor\":{")
+      builder.append("},\"payor\":{")
+      
      for( item <- statisticEthnicity)
       (
-       builder.append("\"p").append(item._1).append("\":").append(item._2).append(",")
+           builder.append("\"p").append(item._1).append("\":").append(item._2).append(",")
       )
-      builder.append("},")
-      builder.append("\"adm\":{")
-     for( item <- statisticEthnicity)
+      builder.append("},\"adm\":{")
+     
+      for( item <- statisticEthnicity)
       (
-       builder.append("\"a").append(item._1).append("\":").append(item._2).append(",")
+           builder.append("\"a").append(item._1).append("\":").append(item._2).append(",")
       )
       builder.append("},\"children\":[")
       
-//    println(builder.toString())
-    
-//    val builder = StringBuilder.newBuilder
-//    builder.append("{\"name\":").append(data.count()).append(",\"clusterId\": \"Initial Data\" ,\"children\":[")
-    
-//    println(builder.append(clustering(data)).append("]}").toString().replaceAll(",]", "]"))
-    
     val josn = builder.append(clustering(data)).append("]}").toString().replaceAll(",]", "]").replaceAll(",}", "}")
     
     Visualization.packFiles(josn)
